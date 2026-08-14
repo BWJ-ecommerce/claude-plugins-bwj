@@ -1,0 +1,1 @@
+- Publishing or hosting as an Artifact happens in the main conversation, not by you.
