@@ -15,10 +15,10 @@ keeping its own copies, and enables or disables **per plugin** which teams and w
 
 | I want to… | Go to |
 |---|---|
-| **connect my own repo — just the commands** | **[INSTALL.md, the quickstart half](plugins/INSTALL.md#quickstart--the-commands-and-nothing-else)** — four steps, the commands and nothing else, linking down for every caveat. |
-| **connect my own repo — and know why** | **[INSTALL.md, the adoption half](plugins/INSTALL.md#adoption--how-to-connect-your-repo)** — the full, measurement-backed adoption manual for someone who did not build this, ~47 min (August 6, 2026). Read its *Before you start* section first if the machine is new or has adopted this family before. |
-| **disconnect it again** | [UNINSTALL.md](plugins/UNINSTALL.md) — the install page's mirror: the repo teardown and the machine-side removal, in the order they have to happen. |
-| **I already adopted this, under the old plugin names** | [INSTALL.md, migrating from the old plugin names](plugins/INSTALL.md#migrating-from-the-old-plugin-names) — a third procedure, neither the quickstart nor first-time adoption: the old ids (`specialists@claude-code-specialists` and its siblings) mapped onto the new teams and workflow. |
+| **connect my own repo — just the commands** | **[INSTALL.md, the quickstart half](INSTALL.md#quickstart--the-commands-and-nothing-else)** — four steps, the commands and nothing else, linking down for every caveat. |
+| **connect my own repo — and know why** | **[INSTALL.md, the adoption half](INSTALL.md#adoption--how-to-connect-your-repo)** — the full, measurement-backed adoption manual for someone who did not build this, ~47 min (August 6, 2026). Read its *Before you start* section first if the machine is new or has adopted this family before. |
+| **disconnect it again** | [UNINSTALL.md](UNINSTALL.md) — the install page's mirror: the repo teardown and the machine-side removal, in the order they have to happen. |
+| **I already adopted this, under the old plugin names** | [INSTALL.md, migrating from the old plugin names](INSTALL.md#migrating-from-the-old-plugin-names) — a third procedure, neither the quickstart nor first-time adoption: the old ids (`specialists@claude-code-specialists` and its siblings) mapped onto the new teams and workflow. |
 | know **what this promises my repo** | [The plugin serves the consumer's repo](#the-plugin-serves-the-consumers-repo) — the specialists adapt to your way of working; ours is not a standard you inherit. |
 | know **which plugin does what** | [Teams and workflows](#teams-and-workflows--whats-the-difference) |
 | know **how a specialist is built** | [Manuals — the split model](#manuals--the-split-model) |
@@ -28,9 +28,9 @@ keeping its own copies, and enables or disables **per plugin** which teams and w
 | see **the version history** | [`releases/README.md`](workflow-davekjohn/releases/README.md) |
 
 Everything below this table is the underlying explanation, and the page is long on purpose: it is the
-architecture record as much as the landing page. **[INSTALL.md](plugins/INSTALL.md) holds both
-entrances — its [quickstart half](plugins/INSTALL.md#quickstart--the-commands-and-nothing-else) is the
-short one, its [adoption half](plugins/INSTALL.md#adoption--how-to-connect-your-repo) the full one** —
+architecture record as much as the landing page. **[INSTALL.md](INSTALL.md) holds both
+entrances — its [quickstart half](INSTALL.md#quickstart--the-commands-and-nothing-else) is the
+short one, its [adoption half](INSTALL.md#adoption--how-to-connect-your-repo) the full one** —
 this file is what you read when the install page's answer was not enough, or when you are changing the
 system rather than adopting it.
 
@@ -271,11 +271,15 @@ The full picture, top-level folder by folder:
   the Specialists handbook `specialists/README.md` next to them, `rules/` (path-scoped rules), and
   `settings.json` (harness config; see [Consumption](#consumption)).
 - **The root documents** — this `README.md`, `CLAUDE.md`, `CHANGELOG.md`, `CONTRIBUTING.md` and
-  `SECURITY.md`; the two consumer-facing procedures `plugins/INSTALL.md` and `plugins/UNINSTALL.md`
-  sit a level down, beside the plugins they explain — and
-  **`.github/`** (`pull_request_template.md`, the issue templates + `workflows/ci.yml`, the CI gate
-  that runs the lint + test suites on every PR and push to `main`; see
-  [`CONTRIBUTING.md`](CONTRIBUTING.md)).
+  `SECURITY.md`, plus the two consumer-facing procedures [`INSTALL.md`](INSTALL.md) and
+  [`UNINSTALL.md`](UNINSTALL.md) — those sat a level down beside the plugins until
+  [#664](https://github.com/DaveKJohn/claude-code-specialists/issues/664) moved them here, which is
+  what keeps them out of the published marketplace without any exclusion list having to remember
+  them — and
+  **`.github/`** (`pull_request_template.md`, the issue templates + three workflows: `workflows/ci.yml`,
+  the CI gate that runs the lint + test suites on every PR and push to `main`, plus
+  `workflows/claude.yml` and `workflows/claude-code-review.yml`, which answer an `@claude` mention and
+  review each PR. Only `ci.yml`'s job blocks a merge; see [`CONTRIBUTING.md`](CONTRIBUTING.md)).
 
 ## Consumption
 
@@ -288,11 +292,11 @@ machine-wide `user` install instead, and without the refresh it can serve an *ol
 still report success (see [Versioning](#versioning)). The canonical enable-a-plugin walkthrough (the
 settings snippet, the cache refresh, the per-plugin install, the restart, the install-record
 self-check, running the bootstrap skill) is in
-[INSTALL.md](plugins/INSTALL.md#adoption--how-to-connect-your-repo) — four steps, for those who
+[INSTALL.md](INSTALL.md#adoption--how-to-connect-your-repo) — four steps, for those who
 didn't build the system, with its
-[quickstart half](plugins/INSTALL.md#quickstart--the-commands-and-nothing-else) as the commands-only
+[quickstart half](INSTALL.md#quickstart--the-commands-and-nothing-else) as the commands-only
 front door; the way back out is its mirror,
-[UNINSTALL.md](plugins/UNINSTALL.md). This section keeps only the two marketplace-wide facts that matter
+[UNINSTALL.md](UNINSTALL.md). This section keeps only the two marketplace-wide facts that matter
 beyond any one consumer:
 
 **Seeing which release you're on — `plugin.json`.** Each plugin folder carries a `.claude-plugin/plugin.json`
@@ -309,8 +313,10 @@ had the real one, and the 11,684 lines across those ten files were a second copy
 it. One repository, one product, one changelog.
 
 **One canonical channel — mind the old repo names.** The marketplace is named `claude-code-specialists`
-(repo `DaveKJohn/claude-code-specialists`) and that is the only channel; use that name in
-`extraKnownMarketplaces`. This repo has been renamed twice — first from `claude-specialists`, then from
+(repo `DaveKJohn/claude-code-specialists`) and that is the only channel **for a reader who registers it
+themselves**; use that name in `extraKnownMarketplaces`. If this copy reached you through an
+organisation's own marketplace, that channel is the canonical one for you and this paragraph is about
+the public source it was mirrored from — do not register a second one alongside it. This repo has been renamed twice — first from `claude-specialists`, then from
 `davekjohns-workshop` (August 3, 2026) — and an old name keeps pointing at the same repo via a
 **GitHub rename redirect**, so a marketplace still registered under one of them refers to exactly the
 same repo. There is **no second source** to mirror to. However, the local marketplace clone of such an
@@ -407,8 +413,14 @@ have sat unread in his manual. Fixing only the manual would have produced a thir
 ### Persona templates — a third artifact alongside agent def and manual
 
 The orchestrator and the main-loop specialists (Chris #01, Bianca #02, Derek #05, Rendall #06) run in
-the **main loop**, not as subagents — a plugin cannot inject always-on main-loop context, and an
-intake conversation moreover requires direct back-and-forth with the client. They therefore
+the **main loop**, not as subagents. A plugin *can* inject always-on main-loop context — a root
+`settings.json` with an `agent` key activates one of its own agents as the main thread — but that route
+is **verified and deliberately not switched on**, because it changes every consumer's main loop from a
+version bump they did not read, and a second `agent`-setting plugin silently wins on load order
+([issue #215](https://github.com/DaveKJohn/claude-code-specialists/issues/215); the same correction has
+been in [`specialists-init`'s page](plugins/teams/team-alpha/skills/specialists-init/SKILL.md) since
+that decision, and this sentence was the copy it never reached). An intake conversation moreover
+requires direct back-and-forth with the client. They therefore
 deliberately have **no** agent def; their portable source lives in
 `plugins/teams/team-alpha/personas/<group>-<id>-persona.md` as a **self-contained template** (portable body
 + a repo-lens placeholder). The consumer loads the **portable body straight from the plugin install**
@@ -507,8 +519,14 @@ SessionStart hooks (`connector-sessioncheck`, `roster-sessioncheck`, `script-con
 `workflow-sessioncheck`) function in Claude Code and in Cowork, but not in a plain Claude.ai Chat session — only the skills
 <!-- skills:all -->(`fold-changelog`, `open-pr`, `ship-pr`, `new-branch`, `park`, `fix-mojibake`,
 `specialists-init`, `specialists-teardown`, `sync-roster`, `start-task`, `cut-release`,
-`adopt-config`, `adopt-workflow-folder`, `discover-workflow`, `lock`, `continue`)<!-- /skills:all -->
+`adopt-config`, `adopt-workflow-folder`, `discover-workflow`, `lock`, `continue`,
+`orchestrator`)<!-- /skills:all -->
 remain available there.
+
+**`orchestrator` is on that list for a reason worth reading twice.** Everything else there is a
+convenience that survives; that one is the *conductor*. Where the roster and the hooks fall away, it is
+what puts Chris back in the conversation — so the layer this table shows as unavailable has a route in
+through the one column that is.
 
 Skills themselves are Anthropic's general **Agent Skills** mechanism — organized folders of
 instructions/scripts/resources that an agent discovers and loads progressively (name + description
@@ -519,6 +537,67 @@ and the [docs](https://code.claude.com/docs/en/skills)). Not confirmed: whether 
 Claude Agent SDK, or whether a Cowork subagent shares its definition format with — or is
 interchangeable with — a Claude Code subagent.
 
+## Which half needs a repository — the Claude App map
+
+The section above answers *which mechanisms* a surface supports. This one answers the question that
+turned out to matter more: **which of this repo's contents can do their job when there is no repository
+at all** — a Claude App user with the plugins installed and nothing checked out. The two questions look
+alike and come apart immediately: a skill is available on every surface, and a skill that ends in
+`powershell -File ...\open-pr.ps1` is available and useless.
+
+**The rule, so a new item can be classified without re-running the sweep.** Applied to the *item*,
+in order:
+
+1. **Does it ship an executable** — a `.ps1` in its own folder, or a `hooks.json` that invokes one?
+2. **Do its instructions send the reader to run one, or to read or write a path in the consuming repo?**
+3. Otherwise it is portable.
+
+Three candidate rules were weighed and this one was kept because it is the only one that can be
+*checked*: "does it shell out" misses the wrappers that shell out one level down, and "does it assume a
+git branch" is a judgement about prose. Test 1 is a directory listing; test 2 is
+`grep -rl '\.ps1' plugins --include='*.md'`, which returned **30** files against the tree on August 15,
+2026 — 28 of them true, and the two that were not are the interesting part.
+
+**The verdict has three values, not two, and that is the finding.** A binary map has to round the two
+`grep` survivors — Ravi's agent def (`06-24`, which names the shared-block generator) and Liam's
+(`04-20`, which names `new-branch.ps1`) — either into "App-safe", handing an App user a step that cannot
+run, or out of their team, losing a whole specialist over one line. Neither is right, because a
+specialist's *craft* is portable and one step of one procedure is not. So:
+
+| verdict | meaning | who |
+|---|---|---|
+| **portable** | works with no repository | the personas, manuals, and 13 of 15 `team-alpha` agent defs; the shared blocks in `agent-shared/`; the `orchestrator` skill |
+| **degraded** | works, minus a named step | Ravi `06-24` and Liam `04-20` — one step each, both of them a script |
+| **repo-bound** | cannot function at all | both workflow plugins whole; `team-alpha`'s three PowerShell skills and its two SessionStart hooks; `team-shopify`'s `start-task` |
+
+**What the Claude App package is: a filtered publication, not a second repository.**
+[`publish-to-business.ps1`](scripts/release/publish-to-business.ps1) already overwrites
+`BWJ-ecommerce/claude-plugins-bwj` from here on every run; since
+[#683](https://github.com/DaveKJohn/claude-code-specialists/issues/683) it publishes the subset
+[`Get-BusinessMarketplacePlugins`](scripts/repo-config.ps1) names — the four teams — and rebuilds the
+manifest to match. The workflow is not offered there because it is not there. No per-entry hide flag was
+invented: the manifest format has none, and one would need Claude to honour it, while a plugin that did
+not travel cannot be offered by anything.
+
+**The marketplace keeps its name.** `claude-code-specialists` is the key in every consumer's
+`enabledPlugins` (`team-alpha@claude-code-specialists`), so the filtered marketplace is the *same*
+marketplace with fewer entries, not a second one under a new key.
+
+**The unit is the plugin, and the degraded items travel.** `team-alpha`'s three PowerShell skills and
+two hooks go to the App target along with everything else in that plugin, because the plugin published
+there has to be byte-identical to the plugin released here — otherwise its version number stops meaning
+one thing. They are handled where they can be handled without forking: the hooks are simply inert in a
+plain Chat session, and `v4.9.0` ([#672](https://github.com/DaveKJohn/claude-code-specialists/issues/672))
+made all three skills non-model-invocable and had each name its PowerShell dependency in its own
+description, so the model cannot walk a user into one.
+
+**How the sync stays honest.** The publication has always refused a manifest naming a folder that did
+not travel. Filtering makes the *reverse* possible — a plugin folder that travels while the manifest
+never mentions it — and that one is silent: nothing errors, Claude simply never offers it, and the
+manifest reads as a complete marketplace to anyone who checks it instead of the tree. Both directions
+are hard stops now, and a keep-list naming a plugin the manifest does not have is a third, because a
+typo there would quietly exclude the plugin it meant to keep and report success.
+
 ## How we use skills — and what we deliberately don't
 
 <!-- skills:all -->Most skills in claude-code-specialists today (`fold-changelog`, `open-pr`, `ship-pr`,
@@ -527,8 +606,11 @@ interchangeable with — a Claude Code subagent.
 bootstrap, teardown, roster-sync, encoding repair, reading a repo's own conventions, the standing
 before and after a context clear). `lock` and `continue` are the first pair to wrap **one** script
 between them — they run the same reporter and differ only in what they do with the answer, which is why
-the shared-scripts registry names a script's documenting page rather than its callers. `cut-release`<!-- /skills:all --> is the deliberate exception:
-a checklist with no script of its own (see below). Either way, the specialists' craft and judgment
+the shared-scripts registry names a script's documenting page rather than its callers. `cut-release`
+and `orchestrator`<!-- /skills:all --> are the deliberate exceptions:
+a checklist with no script of its own (see below), and a skill that must not have one — `orchestrator`
+reads a persona file into the conversation, and the environment it exists for is precisely the one
+where `powershell` is absent. Either way, the specialists' craft and judgment
 live in the persona/manual context (agent defs), not in skills. That's a deliberate split, but it
 also means we currently use only one half of what Agent Skills can carry.
 
@@ -585,15 +667,15 @@ the mechanics.
 
 A newly added **skill** additionally needs a session restart before it becomes visible, and the
 skill counters `/reload-plugins`/`/reload-skills` print are not reliable evidence either way — see
-[Staying up to date](plugins/INSTALL.md#staying-up-to-date) in the adoption page for the full detail.
+[Staying up to date](INSTALL.md#staying-up-to-date) in the adoption page for the full detail.
 
 ## Adoption: the bootstrap path
 
 > **New here?** The shareable beginner route is
-> [INSTALL.md](plugins/INSTALL.md#adoption--how-to-connect-your-repo) — get connected in four
+> [INSTALL.md](INSTALL.md#adoption--how-to-connect-your-repo) — get connected in four
 > steps, for those who didn't build the system, with its
-> [quickstart half](plugins/INSTALL.md#quickstart--the-commands-and-nothing-else) as the
-> commands-only front door and [UNINSTALL.md](plugins/UNINSTALL.md) as its mirror for the way back out. Below
+> [quickstart half](INSTALL.md#quickstart--the-commands-and-nothing-else) as the
+> commands-only front door and [UNINSTALL.md](UNINSTALL.md) as its mirror for the way back out. Below
 > is the underlying explanation.
 
 Enabling the plugin delivers the **worker subagents**, but not the **conductor** (Chris) or the
@@ -672,7 +754,7 @@ second `agent`-setting plugin gets a different orchestrator without being told.
   > [#297](https://github.com/DaveKJohn/claude-code-specialists/issues/297)). This procedure is described at
   > three entry points, and they used to count it as *four acts* here, *three acts* in
   > [`specialists-init`](plugins/teams/team-alpha/skills/specialists-init/SKILL.md#chicken-and-egg--step-0-is-done-by-the-user)
-  > and *three steps* in the [adoption page](plugins/INSTALL.md#connecting-in-four-steps) — the same path, no
+  > and *three steps* in the [adoption page](INSTALL.md#connecting--the-install-step) — the same path, no
   > step missing anywhere, three different numbers. A reader following it for the first time has the
   > count as their only check on whether they skipped something, and three counts remove exactly that.
   > Two of the three were also counting different things: #284 raised this page from three to four by
@@ -732,7 +814,7 @@ second `agent`-setting plugin gets a different orchestrator without being told.
   > the update refuses outright on a project-scoped install. Project scope is the intended model for
   > this family (Dave, July 30, 2026) — it gives each repo **its own install record**, and every other
   > document here assumes it. Full mechanics of the refresh half:
-  > [Staying up to date](plugins/INSTALL.md#staying-up-to-date).
+  > [Staying up to date](INSTALL.md#staying-up-to-date).
   >
   > **What project scope does *not* promise is that the record stays put** (inbound
   > [#296](https://github.com/DaveKJohn/claude-code-specialists/issues/296)). This sentence used to say it
@@ -750,7 +832,7 @@ second `agent`-setting plugin gets a different orchestrator without being told.
   > what changes is that you should **read your record rather than trust it**. On a machine with several
   > consumers and several sessions, `installed_plugins.json` is the only place your actual version is
   > written down; the install output does not name a version at all. The query is under
-  > [Staying up to date](plugins/INSTALL.md#staying-up-to-date).
+  > [Staying up to date](INSTALL.md#staying-up-to-date).
   >
   > **Verify with the `projectPath` record, not with `claude plugin list`** — that command is not
   > repo-scoped and reported a plugin as `enabled`, at `project` scope, in this very repo while it
@@ -1071,7 +1153,7 @@ reminder is what a derivation makes unnecessary.
 5. **The docs that enumerate the plugins** — this README (the plugin count, the
    [teams-and-workflows table](#teams-and-workflows--whats-the-difference), the [invocation list](#invocation),
    the manuals list under [Manuals](#manuals--the-split-model), and whether the team is mutually
-   exclusive with the others or complementary) and [`plugins/INSTALL.md`](plugins/INSTALL.md), both
+   exclusive with the others or complementary) and [`INSTALL.md`](INSTALL.md), both
    halves.
 6. **The gates** — `scripts/agents/build-agent-defs.ps1 -Check`,
    [`scripts/lint/check-plugin-integrity.ps1`](scripts/lint/check-plugin-integrity.ps1), and
@@ -1090,11 +1172,11 @@ the roster, the routing) is in [`CLAUDE.md`](CLAUDE.md).
 ## Want to know more?
 
 - **Connecting your own repo?** Follow
-  [INSTALL.md](plugins/INSTALL.md#adoption--how-to-connect-your-repo) — connect in four steps, for those
+  [INSTALL.md](INSTALL.md#adoption--how-to-connect-your-repo) — connect in four steps, for those
   who didn't build the system, or its
-  [quickstart half](plugins/INSTALL.md#quickstart--the-commands-and-nothing-else) if you only want the
+  [quickstart half](INSTALL.md#quickstart--the-commands-and-nothing-else) if you only want the
   commands.
-- **Disconnecting it again?** [UNINSTALL.md](plugins/UNINSTALL.md) is its mirror — the repo teardown and the
+- **Disconnecting it again?** [UNINSTALL.md](UNINSTALL.md) is its mirror — the repo teardown and the
   machine-side removal, in the order they have to happen.
 - **Releases** — the full version history and the cutting-a-release mechanics are in
   [`releases/README.md`](workflow-davekjohn/releases/README.md).
