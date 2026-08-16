@@ -77,6 +77,34 @@ via a PR.
   answer** — when one place is wrong and another is right, the correct text is evidence about which
   way to repair, and it is free. Whoever files the finding sees the site that bit them; finding the
   rest is the writer's job.
+- **Restating a rule for a reader who arrives at a different door is a choice; make it a recorded one.**
+  Not every repetition is duplication. A constitution, a specialist's own lens, and a contributor page
+  each have a reader who will not follow a link to find the rule they need, and stating it in full in
+  all three is often right. What makes it *wrong* is leaving it unmarked: a later sweep cannot tell a
+  deliberate restatement from a copy that drifted, so it reports the same finding every time, and the
+  answer has to be re-derived by whoever picks it up.
+  So when you restate on purpose, say so where the restatement lives, and name the sites. The cost of
+  the note is one sentence; the cost of not writing it is a recurring finding plus the risk that
+  somebody eventually "repairs" it by deleting the copy a reader actually needed. And keep the honest
+  limit in view: a rule stated in full in three places still has to be edited in three places when it
+  changes, so restate the *rule* and keep any *measurement* behind it in one place only.
+- **A claim about the outside world is marked as one; a claim about this repo is not.** Documentation
+  that argues from measurement ends up holding two kinds of number that read identically on the page.
+  One kind is **re-derivable**: counts of files, headings, sections, sizes — anything a reader can
+  recompute from the tree, and that a gate can therefore hold. The other kind is a **snapshot of
+  something outside the repo**: which version a consumer runs, whether a team has adopted something,
+  how many items are open somewhere else. Nothing polls that second kind, nothing can, and it starts
+  going stale the moment it is typed.
+  So write the difference into the sentence. A re-derivable figure states its **method**, so the next
+  reader re-runs it instead of trusting it. An outside claim states that it was **true when written
+  and is not verified since** — and where it is load-bearing, says what would have to be checked to
+  confirm it still holds. Both halves matter: a method turns a number into something reproducible,
+  and the staleness marker stops a reader treating an old snapshot as a current fact.
+  **The failure this prevents is not a stale number, it is a false one.** A snapshot copied forward
+  into a new document is written in the present tense about a world that has moved, so it arrives
+  wrong rather than merely old — and if that document is published, the correction cannot reach the
+  copies already sent. That is why the marking belongs in the writing rather than in a check: the
+  claim is about somewhere the checker cannot look.
 - **Portable is the default for a way of working; the lens is the exception you have to justify.**
   Where a decision was *made* says nothing about where it *applies*. A rule about how a specialist
   works — what they own, what they may do without asking, how they hand over — travels with them and
@@ -88,9 +116,9 @@ via a PR.
   **The corollary matters just as much.** When the portable version would be too broad for some
   consumer, do **not** soften the portable text to pre-empt that — a vague core is worse for every
   reader and hides the mechanism that already exists. State the core in full, and let the consumer that
-  deviates record its deviation in its own lens. (Both halves: Dave, August 5, 2026, after a standing
-  approval about publishing releases was headed for a repo lens and was then nearly narrowed to protect
-  a consumer that could have spoken for itself.)
+  deviates record its deviation in its own lens. (Both halves come from one decision in the source
+  repo, taken after a standing approval about publishing releases was headed for a repo lens and was
+  then nearly narrowed to protect a consumer that could have spoken for itself.)
 - **When moving/restructuring: nothing silently drops, everything stays referenced.** If text moves
   from one doc to another, Tessa checks two things explicitly. (a) *No nuance is lost:* whatever can't
   come along when a body is made generic because it's repo-specific moves to the repo-specific

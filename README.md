@@ -47,6 +47,19 @@ it gets bumped for work it never had, one tag covers two products, and one chang
 histories. So the next product gets its own repository and its own marketplace, and the directory
 layer that used to stand by to hold a second family here has been removed.
 
+**What was retired is the framing, not the word — decided August 15, 2026, and written down here
+because it keeps being reported as drift.** The *name* went: "the workshop repo" was used in 32 places
+as a live name for this repository, next to the correct term in the same paragraph in several of them,
+which reads to a newcomer as two repositories one of which they cannot find. Those all say "the source
+repo" now. But **"the workshop" as a role word survives, in 310 places**, and deliberately: it describes
+what this side of the marketplace *does* — it is where the plugins are built — and nothing about the
+one-product rule makes that untrue. Sweeping it would be a prose-sensitive rewrite across 61 files of
+shipped plugin content, buying consistency at the price of worse sentences, and the measurement behind
+that call is in
+[#720](https://github.com/DaveKJohn/claude-code-specialists/issues/720). The three references to the
+literal old repository name `davekjohns-workshop` are the historical record of the rename and are
+correct as past tense.
+
 **The nuance, so nobody repairs the wrong thing later: lockstep *within* this product is correct.**
 The plugins are one system — a stack of teams plus an opt-in workflow — and a consumer running
 `team-alpha` alongside `team-shopify` needs matching versions. What was wrong was never the lockstep;
@@ -520,8 +533,8 @@ SessionStart hooks (`connector-sessioncheck`, `roster-sessioncheck`, `script-con
 `workflow-sessioncheck`, `prompt-sessioncheck`) function in Claude Code and in Cowork, but not in a plain Claude.ai Chat session — only the skills
 <!-- skills:all -->(`fold-changelog`, `open-pr`, `ship-pr`, `new-branch`, `park`, `fix-mojibake`,
 `specialists-init`, `specialists-teardown`, `sync-roster`, `start-task`, `cut-release`,
-`adopt-config`, `adopt-workflow-folder`, `discover-workflow`, `lock`, `continue`, `prompt`,
-`orchestrator`)<!-- /skills:all -->
+`adopt-config`, `adopt-workflow-folder`, `discover-workflow`, `lock`, `handover`, `prompt`,
+`release-notes-page`, `orchestrator`)<!-- /skills:all -->
 remain available there.
 
 **`orchestrator` is on that list for a reason worth reading twice.** Everything else there is a
@@ -603,11 +616,12 @@ typo there would quietly exclude the plugin it meant to keep and report success.
 
 <!-- skills:all -->Most skills in claude-code-specialists today (`fold-changelog`, `open-pr`, `ship-pr`,
 `new-branch`, `park`, `fix-mojibake`, `specialists-init`, `specialists-teardown`, `sync-roster`,
-`start-task`, `adopt-config`, `adopt-workflow-folder`, `discover-workflow`, `lock`, `continue`,
-`prompt`) are a thin wrapper around a script — procedural **mechanism** (branch, PR, ship, fold,
-bootstrap, teardown, roster-sync, encoding repair, reading a repo's own conventions, the standing
-before and after a context clear, and the assignment written in an editor rather than the terminal).
-`lock` and `continue` are the first pair to wrap **one** script
+`start-task`, `adopt-config`, `adopt-workflow-folder`, `discover-workflow`, `lock`, `handover`,
+`prompt`, `release-notes-page`) are a thin wrapper around a script — procedural **mechanism** (branch,
+PR, ship, fold, bootstrap, teardown, roster-sync, encoding repair, reading a repo's own conventions, the
+standing before and after a context clear, the assignment written in an editor rather than the terminal,
+and the reading copy of the release notes).
+`lock` and `handover` are the first pair to wrap **one** script
 between them — they run the same reporter and differ only in what they do with the answer, which is why
 the shared-scripts registry names a script's documenting page rather than its callers. `cut-release`
 and `orchestrator`<!-- /skills:all --> are the deliberate exceptions:
