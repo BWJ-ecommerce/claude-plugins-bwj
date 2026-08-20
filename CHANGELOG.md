@@ -1,9 +1,12 @@
 # Changelog
 
 Everything merged since the last release, **newest first**: **one `##` per change**, and under it two
-named `###` sections answering what a reader arrives with. Entries written before August 16, 2026 carry
-six, and are read exactly as they always were. Every release ever cut is listed in
-[`workflow-davekjohn/releases/README.md`](workflow-davekjohn/releases/README.md) — each with its date, type and title, and a link to what that
+named `###` sections answering what a reader arrives with — what the change deploys to `main`, and the PR.
+The first holds the change's two audiences, the second of them under `#### What makes this change extra
+special`; the tier numbers live in the parser rather than in any heading. Entries written before
+August 16, 2026 carry the longer set of headings that shape replaced, and every earlier shape is read
+exactly as it always was. Every release ever cut is listed in
+[`releases/README.md`](releases/README.md) — each with its date, type and title, and a link to what that
 release was worth. How the mechanism works (entry files, the Significance sections, folding) is described in
 [`workflow-davekjohn/CONTRIBUTING.md`](workflow-davekjohn/CONTRIBUTING.md).
 
@@ -17,101 +20,106 @@ a release with nobody to announce it to.
 
 ---
 
-## Branch `docs/v4-13-0-timing-total` changelog - 20260816-210952
+## `docs/v4-16-0-timing-total` deployment
 
-### What does the change on this branch bring to main?
+### What does the change on this branch deploy to main?
 
-#### Tier 0
+The second of the two timing passes step 0a of the `cut-release` checklist asks for. The v4.16.0 release
+document froze at a subtotal of **7m 36s** because four of its legs were still running on the file it was
+written into — writing the page itself, its local gates, its CI and merge, and the fold. Those legs now have
+timestamps, so the total goes in: **25m 29s** of working time, with writing the page **5m 45s**, the local
+gates and push **2m 57s**, CI and the merge **9m 07s**, and the fold **4s**.
 
-The second timing pass step 0a asks for, which exists because a release note cannot time its own
-publication. `v4.13.0`'s note was frozen at a **6m 15s** head; the remaining legs -- writing the document
-(2m 40s), its own gates (2m 50s), CI and the merge (8m 07s), the fold and the publish (46s) -- are added,
-giving a **total of 20m 38s** from clock start to a published Release with its attachments. The legs are
-given as measured rather than reconciled to the total.
+**The reading that needed a decision rather than a subtraction is the 58m 53s between the published Release
+and the start of the page.** That is the requester deciding to ask for the document, not the procedure
+running. Folded into the total it would report **1h 24m 22s** for work that took twenty-five minutes, and
+every comparison with another release would break. So it is stated beside the total rather than inside it,
+and the wall-clock span is given once so the number is not lost.
 
-**The head and the total moved in opposite directions, and the note reports them together rather than
-picking the flattering one.** The head is a minute above the five-release band because the ordinary,
-pushing form of the cut was refused by the session's permission classifier and had to be re-run in its
-`-NoPush` form with the push issued by hand. The total came in three seconds *below* `v4.12.0`'s 20m 41s
-anyway, because the tail was 14m 23s against 15m 44s -- one CI run finishing faster, not a repair. Reporting
-only the head would have said the release got slower; reporting only the total would have hidden a
-harness-level cost worth watching if it recurs.
-
-**Neither number is offered as a trend**, and the note says so in those words. What the pair does support is
-the older claim they were taken against: the tail is a property of the procedure rather than a run of
-coincidences, and the procedure did not change between these two releases.
-
-**The bullet promising this edit is replaced rather than ticked**, following the rule `v4.7.0` set: an
-attachment is what was published at the moment of publication, so the note now states that the attached copy
-carries the head only and stays frozen. A promise written into a published record becomes false the moment it
-is kept, which is why it becomes a condition instead.
+Two readings the first pass could not produce. The head came to **26%** of the working total, a fifth reading
+for the claim that most of a release happens after the version number exists (`v4.15.0` 21%, `v4.12.0` 24%,
+`v4.13.0` 30%, `v4.14.0` 32%). And the two heaviest legs are **58%** between them, of which only the writing
+is a person's time.
 
 **Score:** 2
 
-#### Higher than tier 0?
+#### What makes this change extra special
 
-A two-paragraph edit to a page a consumer may already have read, in the organisation's section rather than
-theirs. Nothing they do changes.
+It puts a second consecutive end-to-end measurement beside the first, and the pair is what makes the
+fixed-cost claim concrete: **24m 34s** for v4.15.0's thirteen entries against **25m 29s** for v4.16.0's four.
+A release costs what it costs per *event*, not per change — which is an argument for cutting when there is
+something to ship rather than for batching until there is a lot.
 
-**Score:** 1
+The separated requester gap is the part a consumer running this workflow will meet first. A release
+interrupted halfway is the normal case, not the exception, and a timing section that cannot tell waiting
+apart from working produces a number nobody can use twice. The rule this instance sets is to exclude the
+wait, name it, and give the wall clock once.
 
-### Pull Request
+**Score:** 2
 
-The v4.13.0 release note gains its end-to-end total
+### Pull Request · 20260820-140950
 
-[PR #741](https://github.com/DaveKJohn/claude-code-specialists/pull/741) · merged 2026-08-16
+The v4.16.0 release note gains its end-to-end total
+
+[PR #790](https://github.com/DaveKJohn/claude-code-specialists/pull/790)
 
 ---
 
-## Branch `docs/v4-13-0-release-note` changelog - 20260816-205701
+## `docs/v4-16-0-release-note` deployment
 
-### What does the change on this branch bring to main?
+### What does the change on this branch deploy to main?
 
-#### Tier 0
+The hand-written release document for v4.16.0. The cut drafts it from the tier-2 entries in the words their
+authors wrote for a diff reviewer and commits it inside the tagged release commit; this is the rewrite for
+somebody deciding whether to update, held against the seven tests in the `cut-release` skill.
 
-The one hand-written document for the minor tagged this evening: the consumer section rewritten from the
-cut's draft against the seven writing tests, and the two organisational sections no script can generate.
+All four of this release's entries reach tier 2, and only one of them carries an action — so the page opens
+with it and the other three say **no action needed** rather than leaving it to be inferred. The action item
+is `team-shopify`'s new `adopt-shopify-floor` command, written with the dry-run call and the `-Apply` call
+both shown, because the skill's own default is a dry run and a reader who copies one line should copy the
+safe one. The `-LiveThemeId` paragraph states what happens in **both** directions — given, the guard's third
+rule fires; omitted, the block lands commented out and the session check keeps reporting — since the whole
+finding underneath that entry is that the omitted case must stay noisy.
 
-**The item that led *what was still open* for five releases is closed and leaves the list.** `v4.12.0`
-carried "the gate record has not been measured on the case it was built for" because that release shipped
-in one motion and so never produced the duplicate gate run the record absorbs. Two firings have since been
-measured on real pull requests, and the note says what they do and do not support: they confirm the
-mechanism, they are not a distribution, and nobody should read a ratio off n=2.
+Both organisation sections are written. *What it is worth* leads on the install path closing a gap that was
+the default on install, on the two consumers who independently derived the same theme-check config, and on
+the report that was right about the symptom and the cause and wrong about the lever. *What was still open* is
+a snapshot rather than a claim about the present, and every figure in it was read at its source rather than
+carried forward: the organisation's publication target at `9ea8dcf` with all four team plugins at 4.13.0,
+read from their own `plugin.json` files, and the two Dutch settings layers confirmed English by reading the
+repository settings and the label.
 
-**The head is 6m 15s against a five-release band of 4m 57s to 5m 36s, and the extra minute is named rather
-than absorbed.** The ordinary, pushing form of the cut was refused by this session's own permission
-classifier, so it ran in its `-NoPush` form and the push was issued by hand -- two commands where there is
-normally one. That is a property of the harness the release ran in, not of the procedure, and it is written
-into *what was still open* in those terms. Nothing was skipped for it: both gates ran in full, 43 suites
-green in 147s.
-
-**The publication line was re-read at the target rather than carried forward**, which is the habit `#694`
-established. `BWJ-ecommerce/claude-plugins-bwj` is unchanged at commit `d528567` -- the four team plugins
-still on 4.11.0, published 2026-08-15T15:44:13Z -- so the only edit the line needed was that colleagues are
-now **two** releases behind rather than one. Reading it is what establishes that, and carrying it forward is
-what would have made it wrong for the second time in three notes.
-
-**Eight entries became four consumer sections plus a two-item list.** The four gate-record and
-release-note entries carry `Tier 2: N/A` or describe our own craft, so their consumer-facing halves are one
-bullet each or nothing at all -- test 2's line, which asks whether a paragraph describes our effort or the
-reader's outcome.
+**Two things are recorded against this release rather than smoothed over.** The GitHub Release was published
+in the same motion as the cut, one step ahead of the checklist, so its `notes-for-users` attachment is the
+generated draft — the exact outcome step 5's ordering exists to prevent, and which the checklist names as the
+first wrong idea that suggests itself. And step 0a's baseline was never noted, so the timing legs are
+reconstructed from file and commit timestamps and are stated as the weaker evidence they are.
 
 **Score:** 2
 
-#### Higher than tier 0?
+#### What makes this change extra special
 
-The one document a consumer reads to decide whether to update. This release's headline is an action they
-have to take -- `/continue` no longer resolves to the workflow's skill after the update, and they have to
-type `/handover` instead -- so the section leads with it and says plainly that everything else needs no
-action and no migration.
+It is the one document a consumer reads to decide whether to update, and it reaches every one of them as an
+attachment on this release's GitHub Release.
 
-**Score:** 4
+The item that earns the top of the page is the one where doing nothing has a cost that does not announce
+itself twice. A consumer who refreshed to v4.15.0 met a standing `[ERROR]` and a guard whose live-push rule
+could not fire; this page gives them the command that closes it, says which rules were protecting them the
+whole time so it cannot read as "you were unprotected", and tells the two consumers who wrote their own guard
+that they are now running two of them.
 
-### Pull Request
+The page is also the first in this series to carry a process failure of its own release in the section meant
+for it, rather than in a chat message. Publishing early and skipping the baseline are both small, and both
+are exactly the kind of thing a release record is for: the checklist already argued against publishing early
+in advance, which makes this a measured instance of its own warning rather than a new lesson.
 
-The v4.13.0 release note
+**Score:** 3
 
-[PR #740](https://github.com/DaveKJohn/claude-code-specialists/pull/740) · merged 2026-08-16
+### Pull Request · 20260820-135458
+
+The v4.16.0 release note
+
+[PR #783](https://github.com/DaveKJohn/claude-code-specialists/pull/783)
 
 ---
 
