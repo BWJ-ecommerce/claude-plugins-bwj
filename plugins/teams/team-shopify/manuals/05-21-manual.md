@@ -34,6 +34,14 @@ cover the test goal.
 - **Pre-push checklist** before every push: run `shopify theme list`, confirm the target role is an `unpublished`/`development` theme — **never** the live theme. Only then push.
 - **Never** `shopify theme publish` autonomously. **Never** a `--live` pull outside the explicitly permitted cases (pre-task sync, explicit mirror request, targeted `--only` settings toggle).
 - **Never delete a shared/published theme without confirmation** — with one standing exception: the own preview theme of a branch that just went live, via an exact-name-match script that refuses anything live or not `unpublished`.
+- **Read the drift after a `git add -A`, never off the raw `git status`.** This applies to every pull
+  from live — the pre-task sync and both verification pulls of the live push. The CLI writes each file
+  with the line endings live holds, live holds both, so a pull reports files as modified that nobody
+  modified: measured at 37 files with **zero changed lines** on one real theme. Staging costs nothing
+  for exactly those and leaves only real content standing, which is what the judgement needs. **Do not
+  reach for `eol=lf` in `.gitattributes`** — it is the obvious fix and it makes this permanent. The
+  measurement, and what that file should carry instead, is in
+  [Steven #22](05-22-manual.md#the-cli-rewrites-line-endings-and-that-is-a-property-of-the-tool).
 - **A pull mirrors live verbatim, including existing errors.** A shared live theme is edited by third parties; if a file there is flagged as an error by `shopify theme check`, a sync pull brings it in one-to-one and the CI guardrail can block every PR from that moment on. Treat such a fix as its own, named intervention — don't let it silently ride along on an unrelated feature branch.
 - Theme names must not contain `/` — branch `feat/x` → theme name `feat-x`.
 - The concrete details (the store, the live theme id, the shared theme estate, the markets, and the naming rules) live in the consuming repo's extension.
@@ -46,9 +54,51 @@ where somebody configured the matching deny, and the environments where nobody d
 where it matters. So the subagent prepares from the repo side and names the live lookup as the
 persona's; the persona runs the checklist, and the push, on Dave's word.
 
+## The pre-task sync — and why the obvious version of it destroys work
+
+**Work starts by mirroring live into the trunk, and that step is the most dangerous script in a Shopify
+repo.** A live theme has no locking, no merge and no conflict detection: third parties edit it through the
+theme editor while you work, and the last write wins silently. So the trunk has to be brought level with
+live before a branch is cut from it. A **wholesale** pull — `shopify theme pull --live`, `git add -A`,
+commit — is the obvious implementation, and it knows nothing about what the trunk has done since. It
+overwrites it.
+
+**The rule that fixes it is one sentence**, and it is one sentence because all three destruction modes are
+the same case:
+
+> Has the trunk touched this file since the last sync? Then the **trunk** wins. Otherwise **live** wins.
+
+- the trunk **changed** a file live has an older copy of — live must not overwrite it;
+- the trunk **deleted** a file live still has — live must not resurrect it;
+- the trunk **added** a file live does not have — the pull must not delete it.
+
+**Do not write this script.** It ships, as the [`sync-main`](../skills/sync-main/SKILL.md) skill, with the
+exclusion rule as a tested lib beside it — because two Shopify consumers wrote it independently before it
+shipped and the first version destroyed work in both, one of them recording the same procedure reverting
+merged work three times in one week (inbound
+[#787](https://github.com/DaveKJohn/claude-code-specialists/issues/787)). It reads from live and writes to
+git: it never pushes to live, publishes, or deletes a theme.
+
+**Two things to know before running it, both of them about reading the result:**
+
+- **It stops before the merge by default.** The point of the step is a moment where somebody *looks* at
+  what third parties changed before it becomes the base of new branches, so it pushes a `sync/live-…`
+  branch and hands you the PR command. A repo that would rather auto-merge says so through
+  `Get-ShopifySyncMerges`.
+- **The exclusions are the half a reviewer cannot see.** The diff shows what came in; it does not show
+  what was held back. The script prints that list, and it belongs in the PR body.
+
+**And it refuses rather than guessing when it has no reference point** — no previous sync commit and no
+tag. That refusal is the rule protecting itself: without a floor, *every* file looks untouched by the
+trunk, so the exclusion rule would pass everything through and the failure would arrive as a green run.
+
+**The exposure grows the day a repo adopts a changelog**, which is worth saying because nothing else does:
+"merged into the trunk but not live yet" then becomes a *designed* state rather than an accident — it is
+what an entry in `CHANGELOG.md` means. Every such entry names work the wholesale sync would have reverted.
+
 ## Sandra is lazy — so everything runs through scripts (with guardrails)
 
-If a management action repeats itself (standing up a fallback preview theme, pushing to it, cleaning it up, the pre-task sync), it gets a script instead of manual work — the broadly shared automation-first rule. Sandra prefers to operate through an existing script and proactively proposes a new script as soon as a manual sequence comes up for the second time.
+If a management action repeats itself (standing up a fallback preview theme, pushing to it, cleaning it up), it gets a script instead of manual work — the broadly shared automation-first rule. The pre-task sync is the one that no longer needs writing: it ships, and the section above is why. Sandra prefers to operate through an existing script and proactively proposes a new script as soon as a manual sequence comes up for the second time.
 
 Every new admin script gets a **hard allowlist** (with only the live theme as a forbidden target) and runs **dry-run first**. The per-market preview-URL table belongs in one single-source-of-truth helper that the create/push scripts dot-source — domain changed or market added, then update it there and nowhere else.
 

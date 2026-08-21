@@ -1,6 +1,6 @@
 # `team-shopify` — the Shopify add-on team
 
-Three specialists for a Shopify store repo, two skills, and an **operational floor**: the part that is
+Three specialists for a Shopify store repo, three skills, and an **operational floor**: the part that is
 not advice.
 
 | what | who / where |
@@ -8,8 +8,10 @@ not advice.
 | **Liam** 💧 `04-20` | Liquid Developer — features and fixes in the theme code, plus `assets/` and `locales/` |
 | **Sandra** 🛍️ `05-21` | Store Manager — read-only admin reconnaissance and the pre-push checklist |
 | **Steven** 🗂️ `05-22` | Configuration Manager — theme estate, cleanup policy, CLI and auth reference |
-| `start-task` | the skill that opens a task: a branch plus its matching unpublished preview theme |
-| `adopt-shopify-floor` | the skill that **places** the floor in your repo: the guard's seam, a starter `.theme-check.yml`, and the CI workflow over it |
+| `start-task` | the skill that opens a task: the branch. The preview theme is no longer part of it — see `push-preview` |
+| `push-preview` | the skill that pushes the current branch to its own **unpublished** preview theme, creating that theme on the first push rather than at branch creation |
+| `adopt-shopify-floor` | the skill that **places** the floor in your repo: the guard's seams, a starter `.theme-check.yml`, and the CI workflow over it |
+| `sync-main` | the **pre-task sync**: mirror the live theme into the trunk without letting live overwrite what the trunk has done since |
 | `hooks/guard-live-theme.ps1` | **the floor** — a `PreToolUse` guard on the live theme |
 | `hooks/shopify-floor-sessioncheck.ps1` | says when that guard is only half armed, and when a second one is registered beside it |
 
@@ -60,8 +62,8 @@ dangerous. A marker authorises **one** command, visibly, in the transcript.
 
 ## What your repo has to answer
 
-Two optional functions in your own `scripts/repo-config.ps1` — the file `specialists-init` already
-scaffolds:
+Functions in your own `scripts/repo-config.ps1` — the file `specialists-init` already scaffolds. **Three
+belong to the guard**, and one of those is the only one worth answering on day one:
 
 ```powershell
 function Get-ShopifyLiveThemeId    { return '190793613653' }   # shopify theme list names it
@@ -72,19 +74,116 @@ function Get-ShopifyLivePushMarker { return 'SWB-LIVE-PUSH-AUTHORIZED' }
 |---|---|
 | `Get-ShopifyLiveThemeId` | the **id half of rule 3 cannot fire**: `--allow-live` still blocks, and a push aimed at live *by id* passes. A real hole, so the session check reports it once per session rather than leaving it silent. |
 | `Get-ShopifyLivePushMarker` | any marker **ending in** `LIVE-PUSH-AUTHORIZED` is accepted — which is what both existing consumers already write (`SWB-…`, `XOXO-…`). Setting it **narrows** to your spelling alone. |
+| `Get-ShopifyThemeDeleteMarker` | **rule 2 stays absolute** — a theme delete is refused and no marker exists that could pass it. That is how the guard behaved before this seam, and an unstated seam has to keep meaning what it meant yesterday. See below. |
 
 The guard reads them on every command, so a change takes effect immediately; nothing needs restarting.
 
-**You do not have to place that block by hand** — the `adopt-shopify-floor` skill writes it, and takes
-the id as a parameter so the guard is armed in the same move. It also places the two items every Shopify
-consumer of this plugin has otherwise written from scratch: a starter `.theme-check.yml` and the CI
-workflow over it.
+### Letting a session clear away its own spent preview themes
+
+**Opt-in, and off unless you ask for it.** A theme delete is blocked outright by default. A repo whose
+preview themes are created and thrown away by the same workflow can hand that cleanup to a session by
+naming a marker of its own:
+
+```powershell
+function Get-ShopifyThemeDeleteMarker { return 'SWB-THEME-DELETE-AUTHORIZED' }
+```
+
+A delete then needs that exact marker on that exact command — the same shape as the live-push
+authorisation, and for the same reason: it authorises **one** command, visibly, in the transcript.
+
+```sh
+shopify theme delete --store x.myshopify.com --theme 198933086549  # SWB-THEME-DELETE-AUTHORIZED
+```
+
+Three things this deliberately does **not** do:
+
+- **The live theme is refused even with the marker.** That check runs *before* the authorisation path, so
+  no marker reaches past it. Shopify will not delete a published theme either — this is the belt to that
+  braces, and it is the one outcome nothing else in the hook could undo.
+- **It does not open deletes generally.** Answering the seam changes nothing about a delete command that
+  does not carry the marker.
+- **One marker may not do two jobs.** Answer this with the *same* string as `Get-ShopifyLivePushMarker`
+  and the delete capability stays **off**. A live-push marker gets written as a matter of routine — it is
+  in the step list — so accepting it here would turn every documented live push into standing
+  authorisation to delete. It fails safe: the cost of the collision is one word of config, the cost of
+  allowing it is a theme.
+
+**Why the default is not simply "allow anything that is not live".** A real Shopify estate is not just the
+live theme and this week's preview. It carries dated backups, themes named `DO NOT DELETE`, and abandoned
+work from previous agencies — measured on a live store in August 2026: nineteen themes, of which one was
+a current preview. Nothing in a command distinguishes a spent preview from any of the rest, so the marker
+is what makes the deletion deliberate; being merely non-live is not enough.
+
+**Five more belong to the pre-task sync** (`sync-main`), and only the store is required beside the theme
+id — the other three have defaults that are right for both existing Shopify consumers:
+
+| function | default | what it decides |
+|---|---|---|
+| `Get-ShopifyStoreDomain` | **required** | the store the sync pulls from. It refuses rather than guessing; the skill's `-Store` gets you through one run. |
+| `Get-ShopifySyncReferencePattern` | `^[Ss]ync` | the `--grep` pattern that recognises a previous sync commit. **Narrow it if your history says so, never widen it:** the floor is the *most recent* match, so a looser pattern can only move it forward and protect fewer files. |
+| `Get-ShopifySyncBranchPrefix` | `sync/live-` | the drift branch's prefix. Yours to set because it has to line up with whatever your PR guardrails and CI exempt. |
+| `Get-ShopifySyncMerges` | `$false` | `$true` opens the PR and merges once CI is green. The default pushes and stops, so somebody *looks* at what third parties changed before it becomes the base of new branches. |
+| `Get-TrunkBranchName` | `main` | the trunk. Not a Shopify seam — the sync simply reads it if your repo has answered it. |
+
+**And one more belongs to the preview push** (`push-preview`), which otherwise reuses the store domain,
+the live theme id and the trunk from the two tables above:
+
+| function | default | what it decides |
+|---|---|---|
+| `Get-ShopifyPreviewUrls` | one URL on the store's own domain | the preview URL(s) printed after a push. Answer it in a **multi-market** store to get one per market or locale. |
+
+**That one is a seam because the market table genuinely is per-store, and the rest of the job is not.** One
+consumer runs a single domain with locale-prefixed paths (`/`, `/en`, `/de`, `/nl-gb`, …); another runs five
+separate domains. A shipped table would have produced four domains that do not exist. What *is* shared is
+that a preview link needs `_ab=0&_fd=0&_sc=1` to survive the first internal click — without them the
+preview holds only through the cookie, and you are then looking at **live** while believing you are looking
+at the preview. A consumer lost a whole review to that. The built-in single URL carries them; a seam answer
+has to carry them itself.
+
+**`Get-ShopifyLiveThemeId` is recommended rather than required here**, unlike for `sync-main`, and the
+difference is which direction the risk runs. `sync-main` reads *from* live, so not knowing which theme is
+live means it cannot work at all. `push-preview` pushes to an *unpublished* theme and wants the live id
+only for a belt-and-braces refusal — and the guard hook blocks a live-aimed push whether or not the script
+recognised the target. So an unanswered seam costs one of two independent refusals, and the script says so
+out loud instead of blocking a preview.
+
+Every one of them is read through `Get-Command`, so **this plugin depends on neither workflow plugin**: a
+repo on `workflow-default`, on `workflow-davekjohn`, or on neither gets identical behaviour. That includes
+the branch-name flattening `push-preview` needs — Shopify rejects a theme name containing `/`, so the
+branch name is taken from `Get-BranchInfo`'s `SafeName` where the repo has it and falls back to replacing
+`/` with `-`, which is the same answer.
+
+**You do not have to place any of that by hand** — the `adopt-shopify-floor` skill writes the block, and
+takes the theme id and the store as parameters so both are answered in the same move. It also places the
+two items every Shopify consumer of this plugin has otherwise written from scratch: a starter
+`.theme-check.yml` and the CI workflow over it.
 
 **A placeholder does not count as an answer, on purpose.** `Get-ShopifyLiveThemeId` returning anything
 non-numeric — a `VUL-IN` left in place, most likely — is read by both the guard and the session check as
 *unanswered*. A theme id is numeric, and the alternative is worse than an absent function: a stub would
 silence the report while leaving the id half exactly as inert as before. That is the shape this README
 warns about two sections down — a hole with a comment on it.
+
+## The one thing to know before you read a `git status` here
+
+**Every pull from live reports files as modified that nobody modified**, and this team's whole safety
+model rests on reading that output. The CLI writes each file with the line endings **live** holds, live
+holds both, and git checks out according to `core.autocrlf` — two writers, different habits. Measured on
+a real store theme: **37 files** reported as modified with **zero changed lines**.
+
+- **Read the drift after a `git add -A`, never off the raw `git status`.** Staging costs nothing for
+  exactly those files and leaves only real content standing.
+- **Do not pin `eol=lf` in `.gitattributes`.** It is the obvious fix and it makes this **permanent** —
+  the same files come back after every pull, forever, converting the one signal that spots a third
+  party's in-flight edit into standing noise. What that file should carry is `* text=auto` plus explicit
+  `binary` declarations, and nothing else.
+
+Both halves, with the three measurements behind them, are in
+[Steven's manual](manuals/05-22-manual.md#the-cli-rewrites-line-endings-and-that-is-a-property-of-the-tool).
+This is a property of the **CLI**, not of any one store, so any Windows Shopify consumer meets it —
+which is exactly why it is here rather than in a repo lens (inbound
+[#788](https://github.com/DaveKJohn/claude-code-specialists/issues/788), reported by two consumers
+independently, one of which had to invert its own first conclusion).
 
 ## Converging off a hand-written guard
 
